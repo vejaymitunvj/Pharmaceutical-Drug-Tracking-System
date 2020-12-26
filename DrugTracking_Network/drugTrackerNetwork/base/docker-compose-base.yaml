@@ -1,0 +1,154 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '2'
+
+services:
+
+  orderer.state.com:
+    container_name: orderer.state.com
+    extends:
+      file: peer-base.yaml
+      service: orderer-base
+    volumes:
+        - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+        - ../crypto-config/ordererOrganizations/state.com/orderers/orderer.state.com/msp:/var/hyperledger/orderer/msp
+        - ../crypto-config/ordererOrganizations/state.com/orderers/orderer.state.com/tls/:/var/hyperledger/orderer/tls
+        - orderer.state.com:/var/hyperledger/production/orderer
+    ports:
+      - 7050:7050
+
+  peer0.hospitalPharma.state.com:
+    container_name: peer0.hospitalPharma.state.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.hospitalPharma.state.com
+      - CORE_PEER_ADDRESS=peer0.hospitalPharma.state.com:7051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.hospitalPharma.state.com:7052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.hospitalPharma.state.com:9051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.hospitalPharma.state.com:7051
+      - CORE_PEER_LOCALMSPID=hospitalPharmaMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/hospitalPharma.state.com/peers/peer0.hospitalPharma.state.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/hospitalPharma.state.com/peers/peer0.hospitalPharma.state.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.hospitalPharma.state.com:/var/hyperledger/production
+    ports:
+      - 7051:7051
+
+  peer0.manufacturer.state.com:
+    container_name: peer0.manufacturer.state.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.manufacturer.state.com
+      - CORE_PEER_ADDRESS=peer0.manufacturer.state.com:9051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:9051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.manufacturer.state.com:9052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:9052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.manufacturer.state.com:9051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.manufacturer.state.com:7051
+      - CORE_PEER_LOCALMSPID=manufacturerMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/manufacturer.state.com/peers/peer0.manufacturer.state.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/manufacturer.state.com/peers/peer0.manufacturer.state.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.manufacturer.state.com:/var/hyperledger/production
+
+    ports:
+      - 9051:9051
+
+  peer0.custPatient.state.com:
+    container_name: peer0.custPatient.state.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.custPatient.state.com
+      - CORE_PEER_ADDRESS=peer0.custPatient.state.com:10051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:10051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.custPatient.state.com:10052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:10052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.custPatient.state.com:10051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.custPatient.state.com:8051
+      - CORE_PEER_LOCALMSPID=custPatientMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/custPatient.state.com/peers/peer0.custPatient.state.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/custPatient.state.com/peers/peer0.custPatient.state.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.custPatient.state.com:/var/hyperledger/production
+    ports:
+      - 10051:10051
+
+  peer0.fda.state.com:
+    container_name: peer0.fda.state.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.fda.state.com
+      - CORE_PEER_ADDRESS=peer0.fda.state.com:8051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:8051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.fda.state.com:8052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:8052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.fda.state.com:8051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.fda.state.com:10051
+      - CORE_PEER_LOCALMSPID=fdaMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/fda.state.com/peers/peer0.fda.state.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/fda.state.com/peers/peer0.fda.state.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.fda.state.com:/var/hyperledger/production
+    ports:
+      - 8051:8051
+
+  peer0.usgovt.state.com:
+    container_name: peer0.usgovt.state.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.usgovt.state.com
+      - CORE_PEER_ADDRESS=peer0.usgovt.state.com:12051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:12051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.usgovt.state.com:12052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:12052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.usgovt.state.com:12051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.usgovt.state.com:11051
+      - CORE_PEER_LOCALMSPID=usgovtMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/usgovt.state.com/peers/peer0.usgovt.state.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/usgovt.state.com/peers/peer0.usgovt.state.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.usgovt.state.com:/var/hyperledger/production
+    ports:
+      - 12051:12051
+
+  peer0.medic.state.com:
+    container_name: peer0.medic.state.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.medic.state.com
+      - CORE_PEER_ADDRESS=peer0.medic.state.com:11051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:11051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.medic.state.com:11052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:11052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.medic.state.com:11051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.medic.state.com:12051
+      - CORE_PEER_LOCALMSPID=medicMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/medic.state.com/peers/peer0.medic.state.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/medic.state.com/peers/peer0.medic.state.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.medic.state.com:/var/hyperledger/production
+    ports:
+      - 11051:11051

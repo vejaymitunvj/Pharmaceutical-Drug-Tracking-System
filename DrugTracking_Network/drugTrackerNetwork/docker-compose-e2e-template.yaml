@@ -1,0 +1,178 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '2'
+
+volumes:
+  orderer.state.com:
+  peer0.hospitalPharma.state.com:
+  peer0.manufacturer.state.com:
+  peer0.custPatient.state.com:
+  peer0.fda.state.com:
+  peer0.usgovt.state.com:
+  peer0.medic.state.com:
+
+networks:
+  drugledgerscript:
+services:
+  ca0:
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-hospitalPharma
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.hospitalPharma.state.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA1_PRIVATE_KEY
+    ports:
+      - "7054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.hospitalPharma.state.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA1_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/hospitalPharma.state.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerhospitalPharma
+    networks:
+      - drugledgerscript
+
+  ca1:
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-manufacturer
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.manufacturer.state.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA2_PRIVATE_KEY
+    ports:
+      - "9054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.manufacturer.state.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA2_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/manufacturer.state.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peermanufacturer
+    networks:
+      - drugledgerscript
+
+ ca2:
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-custPatient
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.custPatient.state.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA3_PRIVATE_KEY
+    ports:
+      - "10054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.custPatient.state.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA3_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/custPatient.state.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peercustPatient
+    networks:
+      - drugledgerscript
+      
+ ca3:
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-fda
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.fda.state.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA4_PRIVATE_KEY
+    ports:
+      - "8054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.fda.state.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA4_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/fda.state.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerfda
+    networks:
+      - drugledgerscript
+
+ ca4:
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-usgovt
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.usgovt.state.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA5_PRIVATE_KEY
+    ports:
+      - "12054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.usgovt.state.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA5_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/usgovt.state.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerusgovt
+    networks:
+      - drugledgerscript
+
+ ca5:
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-medic
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.medic.state.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/CA6_PRIVATE_KEY
+    ports:
+      - "11054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.medic.state.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/CA6_PRIVATE_KEY -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/medic.state.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peermedic
+    networks:
+      - drugledgerscript
+
+  orderer.state.com:
+    extends:
+      file:   base/docker-compose-base.yaml
+      service: orderer.state.com
+    container_name: orderer.state.com
+    networks:
+      - drugledgerscript
+
+  peer0.hospitalPharma.state.com:
+    container_name: peer0.hospitalPharma.state.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.hospitalPharma.state.com
+    networks:
+      - drugledgerscript
+
+  peer0.manufacturer.state.com:
+    container_name: peer0.manufacturer.state.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.manufacturer.state.com
+    networks:
+      - drugledgerscript
+
+  peer0.custPatient.state.com:
+    container_name: peer0.custPatient.state.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.custPatient.state.com
+    networks:
+      - drugledgerscript
+
+  peer0.fda.state.com:
+    container_name: peer0.fda.state.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.fda.state.com
+    networks:
+      - drugledgerscript
+
+  peer0.usgovt.state.com:
+    container_name: peer0.usgovt.state.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.usgovt.state.com
+    networks:
+      - drugledgerscript
+
+  peer0.medic.state.com:
+    container_name: peer0.medic.state.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.medic.state.com
+    networks:
+      - drugledgerscript
+
+

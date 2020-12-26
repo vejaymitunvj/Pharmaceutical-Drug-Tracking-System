@@ -1,0 +1,114 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '2'
+
+volumes:
+  orderer.state.com:
+  peer0.hospitalPharma.state.com:
+  peer0.manufacturer.state.com:
+  peer0.custPatient.state.com:
+  peer0.fda.state.com:
+  peer0.usgovt.state.com:
+  peer0.medic.state.com:
+
+networks:
+  drugledgerscript:
+
+services:
+
+  orderer.state.com:
+    extends:
+      file:   base/docker-compose-base.yaml
+      service: orderer.state.com
+    container_name: orderer.state.com
+    networks:
+      - drugledgerscript
+
+  peer0.hospitalPharma.state.com:
+    container_name: peer0.hospitalPharma.state.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.hospitalPharma.state.com
+    networks:
+      - drugledgerscript
+
+  peer0.manufacturer.state.com:
+    container_name: peer0.manufacturer.state.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.manufacturer.state.com
+    networks:
+      - drugledgerscript
+      
+  peer0.custPatient.state.com:
+    container_name: peer0.custPatient.state.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.custPatient.state.com
+    networks:
+      - drugledgerscript
+      
+  peer0.fda.state.com:
+    container_name: peer0.fda.state.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.fda.state.com
+    networks:
+      - drugledgerscript
+      
+  peer0.usgovt.state.com:
+    container_name: peer0.usgovt.state.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.usgovt.state.com
+    networks:
+      - drugledgerscript
+      
+  peer0.medic.state.com:
+    container_name: peer0.medic.state.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.medic.state.com
+    networks:
+      - drugledgerscript
+      
+  cli:
+    container_name: cli
+    image: hyperledger/fabric-tools:$IMAGE_TAG
+    tty: true
+    stdin_open: true
+    environment:
+      - SYS_CHANNEL=$SYS_CHANNEL
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      #- FABRIC_LOGGING_SPEC=DEBUG
+      - FABRIC_LOGGING_SPEC=INFO
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.hospitalPharma.state.com:9051
+      - CORE_PEER_LOCALMSPID=hospitalPharmaMSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/hospitalPharma.state.com/peers/peer0.hospitalPharma.state.com/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/hospitalPharma.state.com/peers/peer0.hospitalPharma.state.com/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/hospitalPharma.state.com/peers/peer0.hospitalPharma.state.com/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/hospitalPharma.state.com/users/Admin@hospitalPharma.state.com/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash
+    volumes:
+        - /var/run/:/host/var/run/
+        - ./../chaincode/:/opt/gopath/src/github.com/chaincode
+        - ./crypto-config:/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/
+        - ./scripts:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/
+        - ./channel-artifacts:/opt/gopath/src/github.com/hyperledger/fabric/peer/channel-artifacts
+    depends_on:
+      - orderer.state.com
+      - peer0.hospitalPharma.state.com
+      - peer0.manufacturer.state.com
+      - peer0.custPatient.state.com
+      - peer0.fda.state.com
+      - peer0.usgovt.state.com
+      - peer0.medic.state.com
+    networks:
+      - drugledgerscript
